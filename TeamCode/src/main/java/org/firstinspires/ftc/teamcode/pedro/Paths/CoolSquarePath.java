@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
-@Autonomous(name = "CoolSquarePath", group = "JohnnyAuto")
+@Autonomous(group = "JohnnyAuto")
 public class CoolSquarePath extends LinearOpMode {
 
     private Follower follower;
