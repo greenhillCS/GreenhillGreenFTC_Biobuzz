@@ -38,7 +38,15 @@ public class AutonPathB extends LinearOpMode {
 
     // Autonomous routine
     public Command autoRoutine() {
+
+        Command w1 = waitMs(1000);
+        Command w2 = waitMs(2000);
+        Command w3 = waitMs(3000);
+        Command w4 = waitMs(4000);
+        Command w5 = waitMs(5000);
         return sequential(
+                w5,
+                w2,
                 follow(follower, path1())
         );
     }
