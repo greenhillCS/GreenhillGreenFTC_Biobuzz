@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.pedropathing.paths.interpolator.Interpolator;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants.Constants;
+import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
 
 @Autonomous(name = "AutoPathA", group = "Autonomous")
 public class AutonPathA extends LinearOpMode {
@@ -91,6 +92,7 @@ public class AutonPathA extends LinearOpMode {
 
             telemetry.update();
         }
+        PoseStorage.autonomousEndPose = follower.pose();
     }
 
 
