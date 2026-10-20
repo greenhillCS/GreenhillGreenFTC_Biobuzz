@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.BIOBUZZouttakeTest;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.pedropathing.ivy.Command;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -31,27 +31,31 @@ public class BIOBUZZToolClass {
         intake = hardwareMap.get(DcMotor.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
     }
-    public void start(){
+    public Command start(){
         //Starts the intake and shooter
         intake.setPower(0.5);
         shooter.setVelocity(rpm);
+        return null;
     }
     public void stop(){
         //Stops the intake and shooter
         intake.setPower(0);
         shooter.setVelocity(0);
+
     }
-    public void shootIn(){
+    public Command shootIn(){
         //Makes the shooter shoot the staged pollen by turning the gate in
         gate.setPower(-0.5);
+        return null;
     }
     public void shootOut(){
         //Makes the shooter outtake the staged pollen by turning the gate out
         gate.setPower(0.5);
     }
-    public void shootStop(){
+    public Command shootStop(){
         //Makes shooter stop shooting by stoping the gate
         gate.setPower(0);
+        return null;
     }
     public void update(){
         if(gamepad.rightBumperWasPressed()) {

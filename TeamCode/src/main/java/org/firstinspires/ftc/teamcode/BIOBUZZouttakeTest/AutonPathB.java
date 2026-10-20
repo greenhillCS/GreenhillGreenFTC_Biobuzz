@@ -11,6 +11,7 @@ import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import static com.pedropathing.ivy.Scheduler.schedule;
 import static com.pedropathing.ivy.commands.Commands.*;
+import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -22,6 +23,8 @@ import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
 
 @Autonomous(name = "AutoPathB", group = "Autonomous")
 public class AutonPathB extends LinearOpMode {
+
+    private BIOBUZZToolClass tools;
 
     private Follower follower;
 
@@ -47,7 +50,7 @@ public class AutonPathB extends LinearOpMode {
         Command w5 = waitMs(5000);
         return sequential(
                 w5,
-                w2,
+                parallel(tools.shootIn(), w2),
                 follow(follower, path1())
         );
     }
