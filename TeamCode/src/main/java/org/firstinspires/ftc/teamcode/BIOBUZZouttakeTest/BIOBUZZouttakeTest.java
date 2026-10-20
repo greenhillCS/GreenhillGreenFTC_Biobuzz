@@ -29,11 +29,20 @@
 
 package org.firstinspires.ftc.teamcode.BIOBUZZouttakeTest;
 
+import com.pedropathing.api.Paths;
+import com.pedropathing.api.PoseFactory;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.follower.ManualDrive;
+import com.pedropathing.math.Pose;
+import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.pedro.Constants.Constants;
+import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -53,19 +62,20 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class BIOBUZZouttakeTest extends OpMode
 {
     // Declare OpMode members.
+
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotorEx outtake = null;
-    private DcMotor transfer = null;
-    private DcMotor intake = null;
-    private int rpm = 1120;
-    private double MAX = 0.6;
-    private DcMotor frontLeftDrive = null;
-    private DcMotor backLeftDrive = null;
-    private DcMotor frontRightDrive = null;
-    private DcMotor backRightDrive = null;
-    DcMotor wheelServow;
+    private BIOBUZZToolClass tools;
+    private Follower follower;
 
+    private final PoseFactory poseFactory = PoseFactory.degrees();
+    private final Pose topShootPos = poseFactory.of(57.8, 131.9224, 90);
+    private final Pose bottomShootPos = poseFactory.of(57.8, 9.538, 90);
 
+    enum STATE {
+        TELEOP,
+        AUTON
+    }
+    STATE state = STATE.TELEOP;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -74,42 +84,11 @@ public class BIOBUZZouttakeTest extends OpMode
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controllerouttake app on the phone).
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
-        backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
-
-
-        transfer = hardwareMap.get(DcMotor.class, "transfer_motor");
-        outtake  = hardwareMap.get(DcMotorEx.class, "outtake");
-        intake = hardwareMap.get(DcMotor.class, "intake");
-
-
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        transfer.setDirection(DcMotor.Direction.FORWARD);
-        intake.setDirection(DcMotor.Direction.FORWARD);
-
-
-        outtake.setDirection(DcMotor.Direction.REVERSE);
-        outtake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelServow = hardwareMap.get(DcMotor.class, "wheelServow");
-        wheelServow.setDirection(DcMotor.Direction.FORWARD);
-
-
+        follower = Constants.create(hardwareMap);
+        tools = new BIOBUZZToolClass(hardwareMap, gamepad1, telemetry);
 
         // Tell the driver that initialization is complete.
         telemetry.addData("Status", "Initialized");
-
 
     }
 
@@ -126,6 +105,8 @@ public class BIOBUZZouttakeTest extends OpMode
     @Override
     public void start() {
         runtime.reset();
+        follower.setPose(PoseStorage.autonomousEndPose);
+        follower.update();
     }
 
     /*
@@ -133,82 +114,40 @@ public class BIOBUZZouttakeTest extends OpMode
      */
     @Override
     public void loop() {
+        switch (state) {
+            case TELEOP:
+                ManualDrive.driveOrHold(
+                        follower,
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x,
+                        -gamepad1.right_stick_x
+                );
 
-        double max;
-
-        // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-        double lateral =  gamepad1.left_stick_x;
-        double yaw     =  gamepad1.right_stick_x;
-
-        // Combine the joystick requests for each axis-motion to determine each wheel's power.
-        // Set up a variable for each drive wheel to save the power level for telemetry.
-        double frontLeftPower  = axial + lateral + yaw;
-        double frontRightPower = axial - lateral - yaw;
-        double backLeftPower   = axial - lateral + yaw;
-        double backRightPower  = axial + lateral - yaw;
-
-        // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
-        max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-        max = Math.max(max, Math.abs(backLeftPower));
-        max = Math.max(max, Math.abs(backRightPower));
-
-        if (max > 1.0) {
-            frontLeftPower  /= max;
-            frontRightPower /= max;
-            backLeftPower   /= max;
-            backRightPower  /= max;
+                if (gamepad1.dpadLeftWasPressed()) {
+                    Pose cornerPose = new Pose(0, 0, Math.toRadians(-90));
+                    // On the fly Pose creation, we dont recommend this for Autonomous. Only accepts radians for heading
+                    follower.setPose(cornerPose); // overrides our pose
+                } else if (gamepad1.dpadUpWasPressed()) {
+                    follower.follow(Paths.line(follower.pose(), topShootPos).linear(follower.pose(), topShootPos));
+                    state = STATE.AUTON;
+                }else if (gamepad1.dpadDownWasPressed()) {
+                    follower.follow(Paths.line(follower.pose(), bottomShootPos).linear(follower.pose(), bottomShootPos));
+                    state = STATE.AUTON;
+                }
+            case AUTON:
+                if(gamepad1.dpad_right || !follower.isBusy()){
+                    state = STATE.TELEOP;
+                }
         }
 
-        // Setup a variable for each drive wheel to save power level for telemetry
+        follower.update();
+        Pose robotPose = follower.pose(); // returns a Pose object
+        telemetry.addData("Robot X", robotPose.x());
+        telemetry.addData("Robot Y", robotPose.y());
+        telemetry.addData("Robot Heading", Math.toDegrees(robotPose.heading()));
+        // Math.toDegrees() is a built-in java method
 
-        if (gamepad1.right_trigger > 0.6) {
-            transfer.setPower(0.5);
-        }
-        else if (gamepad1.left_trigger > 0.6) {
-            transfer.setPower(-0.5);
-        }else {
-            transfer.setPower(0);
-        }
-
-        // if (gamepad1.dpad_up) {
-        //     intake.setPower(0.5);
-        // }
-        // else if (gamepad1.dpad_down) {
-        //     intake.setPower(-0.5);
-        // }else {
-        //     intake.setPower(0);
-        // }
-        intake.setPower(0.5);
-
-        if(gamepad1.rightBumperWasPressed()) {
-            rpm+=10;
-        }
-        if(gamepad1.leftBumperWasPressed()) {
-            rpm-=10;
-        }
-        telemetry.addData("TPS", rpm);
-
-        // Choose to drive using either Tank Mode, or POV Mode
-        // Comment out the method that's not used.  The default below is POV.
-
-        // POV Mode uses left stick to go forward, and right stick to turn.
-        // - This uses basic math to combine motions and is easier to drive straight.
-
-        // Tank Mode uses one stick to control each wheel.
-        // - This requires no math, but it is hard to drive forward slowly and keep straight.
-        // leftPower  = -gamepad1.left_stick_y ;
-        // rightPower = -gamepad1.right_stick_y ;
-
-        // Send calculated velocity to wheels
-        frontLeftDrive.setPower(frontLeftPower * MAX);
-        frontRightDrive.setPower(frontRightPower * MAX);
-        backLeftDrive.setPower(backLeftPower * MAX);
-        backRightDrive.setPower(backRightPower * MAX);
-
-        outtake.setVelocity(rpm);
-        wheelServow.setPower(1);
+        tools.update();
         // Show the elapsed game time and wheel power.
     }
 
@@ -217,6 +156,7 @@ public class BIOBUZZouttakeTest extends OpMode
      */
     @Override
     public void stop() {
+        tools.stop();
     }
 
 }
