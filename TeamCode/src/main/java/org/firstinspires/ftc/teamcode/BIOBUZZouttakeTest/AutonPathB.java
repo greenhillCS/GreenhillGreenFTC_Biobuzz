@@ -17,6 +17,7 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.pedropathing.paths.interpolator.Interpolator;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants.Constants;
 import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
@@ -57,6 +58,7 @@ public class AutonPathB extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        tools = new BIOBUZZToolClass(hardwareMap, gamepad1, telemetry);
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
         follower.setPose(start);

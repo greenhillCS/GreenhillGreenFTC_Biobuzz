@@ -61,6 +61,7 @@ public class AutonPathA extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        tools = new BIOBUZZToolClass(hardwareMap, gamepad1, telemetry);
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
         follower.setPose(start);
