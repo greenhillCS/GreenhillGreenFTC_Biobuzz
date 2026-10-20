@@ -31,11 +31,10 @@ public class BIOBUZZToolClass {
         intake = hardwareMap.get(DcMotor.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
     }
-    public Command start(){
+    public void start(){
         //Starts the intake and shooter
         intake.setPower(0.5);
         shooter.setVelocity(rpm);
-        return null;
     }
     public void stop(){
         //Stops the intake and shooter
@@ -43,19 +42,18 @@ public class BIOBUZZToolClass {
         shooter.setVelocity(0);
 
     }
-    public Command shootIn(){
+    public void shootIn(){
         //Makes the shooter shoot the staged pollen by turning the gate in
         gate.setPower(-0.5);
-        return null;
+
     }
     public void shootOut(){
         //Makes the shooter outtake the staged pollen by turning the gate out
         gate.setPower(0.5);
     }
-    public Command shootStop(){
+    public void shootStop(){
         //Makes shooter stop shooting by stoping the gate
         gate.setPower(0);
-        return null;
     }
     public void update(){
         if(gamepad.rightBumperWasPressed()) {

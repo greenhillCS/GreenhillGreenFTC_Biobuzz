@@ -51,7 +51,10 @@ public class AutonPathB extends LinearOpMode {
         Command w5 = waitMs(5000);
         return sequential(
                 w5,
-                parallel(tools.shootIn(), w2),
+                parallel(
+                        instant(()->tools.shootIn()),
+                        w2
+                ),
                 follow(follower, path1())
         );
     }

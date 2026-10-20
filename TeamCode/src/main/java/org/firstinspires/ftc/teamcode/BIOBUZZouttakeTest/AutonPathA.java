@@ -48,8 +48,13 @@ public class AutonPathA extends LinearOpMode {
 
         return sequential(
 
-                parallel(tools.start(), w2),
-                parallel(tools.shootIn(), w2),
+                parallel(
+                        instant (()->tools.start()),
+                        w2
+                ),
+                parallel(instant(()->tools.shootIn()),
+                        w2
+                ),
 
                 instant(() -> tools.shootStop()),
 
