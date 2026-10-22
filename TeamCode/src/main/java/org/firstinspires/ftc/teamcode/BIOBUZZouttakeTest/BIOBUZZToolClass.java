@@ -31,17 +31,35 @@ public class BIOBUZZToolClass {
         intake = hardwareMap.get(DcMotor.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
     }
+
     public void start(){
-        //Starts the intake and shooter
         intake.setPower(0.5);
         shooter.setVelocity(rpm);
     }
     public void stop(){
-        //Stops the intake and shooter
         intake.setPower(0);
         shooter.setVelocity(0);
+        gate.setPower(0);
+    }
+    public void startIntake(){
+        //Starts the intake and shooter
+        intake.setPower(0.5);
+    }
+    public void stopIntake(){
+        //Stops the intake and shooter
+        intake.setPower(0);
+    }
+    public void startShooter(){
+        //Starts the intake and shooter
+        shooter.setVelocity(rpm);
 
     }
+    public void stopShooter(){
+        //Stops the intake and shooter
+        shooter.setVelocity(0);
+    }
+
+
     public void shootIn(){
         //Makes the shooter shoot the staged pollen by turning the gate in
         gate.setPower(-0.5);

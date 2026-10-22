@@ -31,7 +31,7 @@ public class AutonPathB extends LinearOpMode {
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
-    private final Pose start = poseFactory.of(59.5155, 131.9224, 90);
+    private final Pose start = poseFactory.of(59.5155, 131.9224, 270);
     private final Pose path1 = poseFactory.of(9.8587, 97.302, 0);
     private final Pose path1Control1 = poseFactory.of(63.5776, 103.1918, 0);
     private final Pose path1Segment1Start = poseFactory.of(9.8587, 97.302, 270);
@@ -50,12 +50,17 @@ public class AutonPathB extends LinearOpMode {
         Command w4 = waitMs(4000);
         Command w5 = waitMs(5000);
         return sequential(
+                instant(()->tools.startShooter()),
                 w5,
+                w2,
                 parallel(
                         instant(()->tools.shootIn()),
+                        instant(()-> tools.startIntake()),
                         w2
                 ),
-                follow(follower, path1())
+                follow(follower, path1()),
+
+                instant(()-> tools.stop())
         );
     }
 
