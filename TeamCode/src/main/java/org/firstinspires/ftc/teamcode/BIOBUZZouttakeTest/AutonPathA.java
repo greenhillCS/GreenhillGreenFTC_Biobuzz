@@ -81,6 +81,7 @@ public class AutonPathA extends LinearOpMode {
 
         while (opModeIsActive()) {
             follower.update();
+            PoseStorage.autonomousEndPose = follower.pose();
             Scheduler.execute();
 
             telemetry.addData("x", follower.pose().x());
@@ -94,7 +95,6 @@ public class AutonPathA extends LinearOpMode {
 
             telemetry.update();
         }
-        PoseStorage.autonomousEndPose = follower.pose();
     }
 
 
