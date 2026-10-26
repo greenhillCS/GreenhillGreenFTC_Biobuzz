@@ -33,6 +33,8 @@ import com.pedropathing.api.Paths;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
+import com.pedropathing.ivy.Command;
+import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -43,6 +45,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants.Constants;
 import org.firstinspires.ftc.teamcode.pedro.PoseStorage;
+import static com.pedropathing.ivy.commands.Commands.*;
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
+import static com.pedropathing.api.Paths.line;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -70,6 +75,8 @@ public class BIOBUZZouttakeTest extends OpMode
     private final PoseFactory poseFactory = PoseFactory.degrees();
     private final Pose topShootPos = poseFactory.of(57.8, 131.9224, 90);
     private final Pose bottomShootPos = poseFactory.of(57.8, 9.538, 90);
+
+    private Command driveToShoot;
 
     enum STATE {
         TELEOP,
@@ -104,6 +111,7 @@ public class BIOBUZZouttakeTest extends OpMode
      */
     @Override
     public void start() {
+        Scheduler.reset();
         runtime.reset();
         follower.setPose(PoseStorage.autonomousEndPose);
         follower.update();
@@ -124,22 +132,35 @@ public class BIOBUZZouttakeTest extends OpMode
                 );
 
                 if (gamepad1.dpadLeftWasPressed()) {
-                    Pose cornerPose = new Pose(0, 0, Math.toRadians(-90));
-                    // On the fly Pose creation, we dont recommend this for Autonomous. Only accepts radians for heading
-                    follower.setPose(cornerPose); // overrides our pose
+                    Pose resetPos = new Pose(0, 0, Math.toRadians(-90));
+                    follower.setPose(resetPos);
+                    follower.update();
                 } else if (gamepad1.dpadUpWasPressed()) {
-                    follower.follow(Paths.line(follower.pose(), topShootPos).linear(follower.pose(), topShootPos));
+                    driveToShoot = lazy(() -> {
+                        Pose start = follower.pose(); // read pose when the command starts
+                        return follow(follower, line(start, topShootPos).linear(start, topShootPos));
+                    });
+                    driveToShoot.schedule();
                     state = STATE.AUTON;
                 }else if (gamepad1.dpadDownWasPressed()) {
-                    follower.follow(Paths.line(follower.pose(), bottomShootPos).linear(follower.pose(), bottomShootPos));
+                    driveToShoot = lazy(() -> {
+                        Pose start = follower.pose(); // read pose when the command starts
+                        return follow(follower, line(start, bottomShootPos).linear(start, bottomShootPos));
+                    });
+                    driveToShoot.schedule();
                     state = STATE.AUTON;
                 }
             case AUTON:
-                if(gamepad1.dpad_right || !follower.isBusy()){
+                boolean sticksMoved = Math.abs(gamepad1.left_stick_x) > 0.1
+                                        || Math.abs(gamepad1.left_stick_y) > 0.1
+                                        || Math.abs(gamepad1.right_stick_x) > 0.1;
+                if(gamepad1.dpad_right || (!follower.isBusy() && !Scheduler.isRunning(driveToShoot)) || sticksMoved){
+                    follower.stop();
                     state = STATE.TELEOP;
                 }
         }
 
+        Scheduler.execute();
         follower.update();
         Pose robotPose = follower.pose(); // returns a Pose object
         telemetry.addData("Robot X", robotPose.x());
