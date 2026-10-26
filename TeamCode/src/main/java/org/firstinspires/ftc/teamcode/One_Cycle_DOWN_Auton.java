@@ -33,7 +33,7 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
     private DcMotorEx shooter = null;
 
     //Shooter constants
-    private int shooterVelocity = 1490;
+    private int shooterVelocity = 2080;
     private int PreShootInterval = 300;
     private int PostShootInterval = 150;
 
@@ -111,29 +111,11 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
                 //    instant(this::setIdle),
                 instant(() -> shooter.setVelocity(shooterVelocity)),
                 waitMs(waitTime),
+
                 instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
+                waitMs(2000),
                 instant(() -> gate.setPosition(0)),
 
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
 
                 //Follow path 1 until parked
                 waitMs(500),

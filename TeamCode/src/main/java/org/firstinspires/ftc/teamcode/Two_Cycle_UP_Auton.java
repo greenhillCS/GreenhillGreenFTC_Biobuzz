@@ -33,8 +33,8 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
     private DcMotorEx shooter = null;
 
     //Shooter constants
-    private int shooterVelocity = 1500;
-    private int PreShootInterval = 600;
+    private int shooterVelocity = 2080;
+    private int PreShootInterval = 300;
     private int PostShootInterval = 150;
 
     // State tracking for telemetry
@@ -115,28 +115,9 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
                 waitMs(5000),
 
                 instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
+                waitMs(2000),
                 instant(() -> gate.setPosition(0)),
 
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
 
                 // Follow Path 2 while INTAKE is active
                 waitMs(500),
@@ -152,23 +133,8 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
                 // SHOOT 5x
                 instant(() -> shooter.setVelocity(shooterVelocity)),
                 waitMs(2000),
-                instant(() -> gate.setPosition(0.8)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(0.8)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(0.8)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(0.8)),
-                waitMs(PostShootInterval),
+                instant(() -> gate.setPosition(1)),
+                waitMs(2000),
                 instant(() -> gate.setPosition(0)),
 
                 waitMs(500),

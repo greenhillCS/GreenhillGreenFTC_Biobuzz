@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.follower.ManualDrive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 @TeleOp(name="TejTeleop2", group="Linear OpMode")
 public class TejTeleop2 extends LinearOpMode {
@@ -13,15 +17,11 @@ public class TejTeleop2 extends LinearOpMode {
     private DcMotor intake = null;
     private DcMotorEx shooter = null;
 
-    private int shooterVelocity = 1490;
+    private int shooterVelocity = 2080;
     private int PreShootInterval = 300;
     private int PostShootInterval = 150;
 
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontLeftDrive = null;
-    private DcMotor backLeftDrive = null;
-    private DcMotor frontRightDrive = null;
-    private DcMotor backRightDrive = null;
 
 
 
@@ -30,8 +30,7 @@ public class TejTeleop2 extends LinearOpMode {
     private ElapsedTime timer = new ElapsedTime();
 
     // Flags to handle gamepad button taps (Edge Detection)
-    private boolean lastLeftBumper = false;
-    private boolean lastRightBumper = false;
+    private Follower follower;
 
     private enum RobotState {
         INTAKE,
@@ -51,19 +50,7 @@ public class TejTeleop2 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftDrive");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "backLeftDrive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");
-        backRightDrive = hardwareMap.get(DcMotor.class, "backRightDrive");
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
-        gate = hardwareMap.get(Servo.class, "gate");
-
-        // FIX: Correct standard Mecanum Direction inversion (Reverse both left sides)
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        follower = Constants.create(hardwareMap);
 
         intake.setDirection(DcMotor.Direction.FORWARD);
         shooter.setDirection(DcMotor.Direction.FORWARD);
@@ -76,27 +63,6 @@ public class TejTeleop2 extends LinearOpMode {
         timer.reset(); // Make sure our loop timer starts clean
 
         while (opModeIsActive()) {
-            double max;
-
-            double axial   = -gamepad1.left_stick_y;
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
-
-            double frontLeftPower  = axial + lateral + yaw;
-            double frontRightPower = axial - lateral - yaw;
-            double backLeftPower   = axial - lateral + yaw;
-            double backRightPower  = axial + lateral - yaw;
-
-            max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-            max = Math.max(max, Math.abs(backLeftPower));
-            max = Math.max(max, Math.abs(backRightPower));
-
-            if (max > 1.0) {
-                frontLeftPower  /= max;
-                frontRightPower /= max;
-                backLeftPower   /= max;
-                backRightPower  /= max;
-            }
 
             // --- State Switching using Dpad ---
             if (gamepad1.dpadUpWasPressed()) {
@@ -174,10 +140,13 @@ public class TejTeleop2 extends LinearOpMode {
             }
 
             // Send calculated power to wheels
-            frontLeftDrive.setPower(frontLeftPower);
-            frontRightDrive.setPower(frontRightPower);
-            backLeftDrive.setPower(backLeftPower);
-            backRightDrive.setPower(backRightPower);
+            ManualDrive.driveOrHold(
+                    follower,
+                    -gamepad1.left_stick_y,
+                    -gamepad1.left_stick_x,
+                    -gamepad1.right_stick_x
+            );
+            follower.update();
 
             // Show telemetry data
             telemetry.addData("Status", "Run Time: " + runtime.toString());

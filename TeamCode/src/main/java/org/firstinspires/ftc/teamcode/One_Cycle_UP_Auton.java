@@ -34,7 +34,7 @@ public class One_Cycle_UP_Auton extends LinearOpMode {
     private DcMotorEx shooter = null;
 
     //Shooter constants
-    private int shooterVelocity = 1550;
+    private int shooterVelocity = 2050;
     private int shootInterval = 400;
 
     // State tracking for telemetry
