@@ -33,7 +33,7 @@ public class Auton_Tester extends LinearOpMode {
     private DcMotorEx shooter = null;
 
     //Shooter constants
-    private int shooterVelocity = 1490;
+    private int shooterVelocity = 2080;
     private int PreShootInterval = 300;
     private int PostShootInterval = 150;
 
@@ -45,20 +45,20 @@ public class Auton_Tester extends LinearOpMode {
 
 
     private final Pose start = poseFactory.of(52.7319, 9.7271, 270);
-    private final Pose point1 = poseFactory.of(24.2271, 9.2729, 180);
+    private final Pose point1 = poseFactory.of(10.8266, 23.809, 270);
     private final Pose point1Control1 = poseFactory.of(49.7408, 20.0226, 0);
-    private final Pose point2 = poseFactory.of(9.2729, 9.2729, 180);
-    private final Pose point3Start = poseFactory.of(9.2729, 9.2729, 180);
+    private final Pose point2Start = poseFactory.of(10.8266, 23.809, 270);
+    private final Pose point2 = poseFactory.of(9.7271, 9.2729, 268);
+    private final Pose point3Start = poseFactory.of(9.7271, 9.2729, 268);
     private final Pose point3 = poseFactory.of(61, 120, 90);
-    private final Pose point3Control1 = poseFactory.of(40.2087, 26.4583, 0);
-    private final Pose point3Control2 = poseFactory.of(10.1364, 121.3555, 0);
+    private final Pose point3Control1 = poseFactory.of(49.748, 23.5056, 0);
+    private final Pose point3Control2 = poseFactory.of(10.1364, 136.3459, 0);
     private final Pose point4 = poseFactory.of(61, 131.5, 90);
     private final Pose point5Start = poseFactory.of(61, 131.5, 90);
     private final Pose point5 = poseFactory.of(10.553, 121.2961, 0);
     private final Pose point5Control1 = poseFactory.of(61.0915, 110.2994, 0);
     private final Pose point5Control2 = poseFactory.of(25.1581, 120.5923, 0);
     private final Pose point5Control3 = poseFactory.of(34.5963, 115.5136, 0);
-
     // Mechanism state helper methods with state tracking
     private void setIdle() {
         robotState = "IDLE";
@@ -66,39 +66,6 @@ public class Auton_Tester extends LinearOpMode {
         intake.setPower(0.0);
         shooter.setVelocity(shooterVelocity);
     }
-    private void setIntake() {
-        robotState = "INTAKE";
-        gate.setPosition(0);
-        intake.setPower(1.0);
-        shooter.setVelocity(shooterVelocity);
-    }
-    /*private void setShoot() {
-        robotState = "SHOOT";
-        gate.setPosition(0.8);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        gate.setPosition(0.8);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        gate.setPosition(0.8);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        gate.setPosition(0.8);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        intake.setPower(0.0);
-        shooter.setVelocity(shooterVelocity);
-    }
-     */
-
     private void setComplete() {
         robotState = "Complete";
         gate.setPosition(0);
@@ -109,34 +76,12 @@ public class Auton_Tester extends LinearOpMode {
     // Autonomous routine using Ivy Command Groups matching your requirements
     public Command autoRoutine() {
         return sequential(
-                // SHOOT 5x then Follow Path 1
+                // SHOOT then Follow Path 1
                 instant(() -> shooter.setVelocity(shooterVelocity)),
-
                 waitMs(5000),
 
-                waitMs(PreShootInterval),
                 instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(1)),
-                waitMs(PostShootInterval),
+                waitMs(2000),
                 instant(() -> gate.setPosition(0)),
 
                 // Follow Path 2 while INTAKE is active
@@ -150,26 +95,12 @@ public class Auton_Tester extends LinearOpMode {
                 follow(follower, path3()),
                 follow(follower, path4()),
 
-                // SHOOT 5x
+                // SHOOT again
                 instant(() -> shooter.setVelocity(shooterVelocity)),
                 waitMs(2000),
-                instant(() -> gate.setPosition(0.8)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
 
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(0.8)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(0.8)),
-                waitMs(PostShootInterval),
-                instant(() -> gate.setPosition(0)),
-
-                waitMs(PreShootInterval),
-                instant(() -> gate.setPosition(0.8)),
-                waitMs(PostShootInterval),
+                instant(() -> gate.setPosition(1)),
+                waitMs(2000),
                 instant(() -> gate.setPosition(0)),
 
                 waitMs(500),
@@ -230,7 +161,7 @@ public class Auton_Tester extends LinearOpMode {
     }
 
     public Path path2() {
-        return Paths.line(point1, point2).tangent();
+        return Paths.line(point2Start, point2).linear(point2Start, point2);
     }
 
     public Path path3() {
