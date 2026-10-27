@@ -69,8 +69,10 @@ public class TejTeleop extends LinearOpMode {
                 intakeOn = !intakeOn;
             }
 
-            if (gamepad1.dpadUpWasPressed()){
-                intakePower = intakePower * -1;
+            if (gamepad1.left_trigger_pressed){
+                intakePower = -1.0;
+            }else{
+                intakePower = 1.0;
             }
 
             if(shooterOn) {
