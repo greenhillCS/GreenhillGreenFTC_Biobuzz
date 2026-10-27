@@ -66,39 +66,6 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
         intake.setPower(0.0);
         shooter.setVelocity(shooterVelocity);
     }
-    private void setIntake() {
-        robotState = "INTAKE";
-        gate.setPosition(0);
-        intake.setPower(1.0);
-        shooter.setVelocity(shooterVelocity);
-    }
-    /*private void setShoot() {
-        robotState = "SHOOT";
-        gate.setPosition(0.8);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        gate.setPosition(0.8);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        gate.setPosition(0.8);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        gate.setPosition(0.8);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        intake.setPower(0.0);
-        shooter.setVelocity(shooterVelocity);
-    }
-     */
-
     private void setComplete() {
         robotState = "Complete";
         gate.setPosition(0);
@@ -109,15 +76,13 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
     // Autonomous routine using Ivy Command Groups matching your requirements
     public Command autoRoutine() {
         return sequential(
-                // SHOOT 5x then Follow Path 1
+                // SHOOT then Follow Path 1
                 instant(() -> shooter.setVelocity(shooterVelocity)),
-
                 waitMs(5000),
 
                 instant(() -> gate.setPosition(1)),
                 waitMs(2000),
                 instant(() -> gate.setPosition(0)),
-
 
                 // Follow Path 2 while INTAKE is active
                 waitMs(500),
@@ -130,9 +95,10 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
                 follow(follower, path3()),
                 follow(follower, path4()),
 
-                // SHOOT 5x
+                // SHOOT again
                 instant(() -> shooter.setVelocity(shooterVelocity)),
                 waitMs(2000),
+
                 instant(() -> gate.setPosition(1)),
                 waitMs(2000),
                 instant(() -> gate.setPosition(0)),

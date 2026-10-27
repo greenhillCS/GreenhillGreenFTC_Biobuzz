@@ -62,7 +62,10 @@ public class TejTeleop extends LinearOpMode {
             } else {
                 intake.setPower(0);
             }
-            if (gamepad1.xWasPressed()){
+
+            if(gamepad1.right_trigger_pressed){
+                intakeOn = true;
+            }else{
                 intakeOn = !intakeOn;
             }
 
@@ -87,13 +90,7 @@ public class TejTeleop extends LinearOpMode {
             if (gamepad1.rightBumperWasPressed()) {
                 shooterPower += 10;
             }
-            if (gamepad1.leftTriggerWasPressed()) {
-                shooterPower -= 100;
-            }
 
-            if (gamepad1.rightTriggerWasPressed()) {
-                shooterPower += 100;
-            }
 
             if(gamepad1.b) {
                 gate.setPosition(0.8);

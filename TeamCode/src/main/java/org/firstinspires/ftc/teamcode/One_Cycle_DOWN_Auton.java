@@ -64,37 +64,6 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
         intake.setPower(1.0);
         shooter.setVelocity(shooterVelocity);
     }
-    private void setShoot() {
-        robotState = "SHOOT";
-        gate.setPosition(1);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        gate.setPosition(1);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        gate.setPosition(1);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        gate.setPosition(1);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        gate.setPosition(1);
-        waitMs(50);
-        gate.setPosition(0);
-        waitMs(50);
-
-        intake.setPower(0.0);
-        shooter.setVelocity(shooterVelocity);
-    }
-
     private void setComplete() {
         robotState = "Complete";
         gate.setPosition(0);
@@ -105,17 +74,14 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
     // Autonomous routine using Ivy Command Groups matching your requirements
     public Command autoRoutine() {
         return sequential(
-                // 1. Shoot then Follow Path 1 in Idle
-                // instant(this::setShoot),
-                //   waitMs(shootTime),
-                //    instant(this::setIdle),
+                waitMs(waitTime - 5000),
+
                 instant(() -> shooter.setVelocity(shooterVelocity)),
-                waitMs(waitTime),
+                waitMs(5000),
 
                 instant(() -> gate.setPosition(1)),
                 waitMs(2000),
                 instant(() -> gate.setPosition(0)),
-
 
                 //Follow path 1 until parked
                 waitMs(500),
