@@ -33,7 +33,7 @@ public class Auton_Tester extends LinearOpMode {
     private DcMotorEx shooter = null;
 
     //Shooter constants
-    private int shooterVelocity = 2080;
+    private int shooterVelocity = 2090;
     private int PreShootInterval = 300;
     private int PostShootInterval = 150;
 
@@ -44,15 +44,15 @@ public class Auton_Tester extends LinearOpMode {
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
 
-    private final Pose start = poseFactory.of(52.7319, 9.7271, 270);
+    private final Pose start = poseFactory.of(54.549, 9.5, 270);
     private final Pose point1 = poseFactory.of(10.8266, 23.809, 270);
     private final Pose point1Control1 = poseFactory.of(49.7408, 20.0226, 0);
     private final Pose point2Start = poseFactory.of(10.8266, 23.809, 270);
-    private final Pose point2 = poseFactory.of(9.7271, 9.2729, 268);
-    private final Pose point3Start = poseFactory.of(9.7271, 9.2729, 268);
+    private final Pose point2 = poseFactory.of(9.7271, 9.7271, 268);
+    private final Pose point3Start = poseFactory.of(9.7271, 9.7271, 268);
     private final Pose point3 = poseFactory.of(61, 120, 90);
     private final Pose point3Control1 = poseFactory.of(49.748, 23.5056, 0);
-    private final Pose point3Control2 = poseFactory.of(10.1364, 136.3459, 0);
+    private final Pose point3Control2 = poseFactory.of(4.4583, 132.2576, 0);
     private final Pose point4 = poseFactory.of(61, 131.5, 90);
     private final Pose point5Start = poseFactory.of(61, 131.5, 90);
     private final Pose point5 = poseFactory.of(10.553, 121.2961, 0);
@@ -91,7 +91,7 @@ public class Auton_Tester extends LinearOpMode {
                 follow(follower, path2()),
 
                 // Follow Path 3 and Path 4
-                waitMs(1000),
+                waitMs(2000),
                 follow(follower, path3()),
                 follow(follower, path4()),
 
