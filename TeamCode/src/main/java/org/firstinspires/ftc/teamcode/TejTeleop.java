@@ -30,7 +30,7 @@ public class TejTeleop extends LinearOpMode {
     private Follower follower;
 
 
-    int shooterPower = 2080;
+    int shooterPower = 2090;
     double intakePower = 1.0;
     boolean shooterOn = true;
     boolean intakeOn = false;

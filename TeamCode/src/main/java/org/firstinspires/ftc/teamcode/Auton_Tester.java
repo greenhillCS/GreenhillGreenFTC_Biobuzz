@@ -52,8 +52,9 @@ public class Auton_Tester extends LinearOpMode {
     private final Pose point3Start = poseFactory.of(9.7271, 9.7271, 268);
     private final Pose point3 = poseFactory.of(61, 120, 90);
     private final Pose point3Control1 = poseFactory.of(49.748, 23.5056, 0);
-    private final Pose point3Control2 = poseFactory.of(4.4583, 132.2576, 0);
-    private final Pose point4 = poseFactory.of(61, 131.5, 90);
+    private final Pose point3Control2 = poseFactory.of(9.9093, 125.6709, 0);
+    private final Pose point4Start = poseFactory.of(61, 120, 90);
+    private final Pose point4 = poseFactory.of(61, 131.5, 92);
     private final Pose point5Start = poseFactory.of(61, 131.5, 90);
     private final Pose point5 = poseFactory.of(10.553, 121.2961, 0);
     private final Pose point5Control1 = poseFactory.of(61.0915, 110.2994, 0);
@@ -169,7 +170,7 @@ public class Auton_Tester extends LinearOpMode {
     }
 
     public Path path4() {
-        return Paths.line(point3, point4).constant(point4);
+        return Paths.line(point4Start, point4).linear(point4Start, point4);
     }
 
     public Path path5() {
