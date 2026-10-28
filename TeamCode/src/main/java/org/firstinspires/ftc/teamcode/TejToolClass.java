@@ -47,9 +47,9 @@ public class TejToolClass {
         this.gamepad = gamepad;
         this.telemetry = telemetry;
 
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        shooter = hardwareMap.get(DcMotorEx.class,"shooter");
-        gate = hardwareMap.get(Servo.class, "gate");
+        intake = hardwareMap.get(DcMotor.class, "intake"); // Port 0
+        shooter = hardwareMap.get(DcMotorEx.class,"shooter"); // Port 1
+        gate = hardwareMap.get(Servo.class, "gate"); // Port 5 (Expansion hub)
         gate.setPosition(0);
 
         // Wait for the game to start (driver presses START)
