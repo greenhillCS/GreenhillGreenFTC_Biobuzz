@@ -26,19 +26,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 @Autonomous(name = "Two_Cycle_UP_Auton", group = "Autonomous")
 public class Two_Cycle_UP_Auton extends LinearOpMode {
     private Follower follower;
-
-    // Hardware components for mechanisms
-    private Servo gate = null;
-    private DcMotor intake = null;
-    private DcMotorEx shooter = null;
-
-    //Shooter constants
-    private int shooterVelocity = 2080;
-    private int PreShootInterval = 300;
-    private int PostShootInterval = 150;
-
-    // State tracking for telemetry
-    private String robotState = "IDLE";
+    private TejToolClass tools;
 
     //PedroPathing Poses
     private final PoseFactory poseFactory = PoseFactory.degrees();
@@ -59,34 +47,20 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
     private final Pose point5Control2 = poseFactory.of(25.1581, 120.5923, 0);
     private final Pose point5Control3 = poseFactory.of(34.5963, 115.5136, 0);
 
-    // Mechanism state helper methods with state tracking
-    private void setIdle() {
-        robotState = "IDLE";
-        gate.setPosition(0);
-        intake.setPower(0.0);
-        shooter.setVelocity(shooterVelocity);
-    }
-    private void setComplete() {
-        robotState = "Complete";
-        gate.setPosition(0);
-        intake.setPower(0.0);
-        shooter.setPower(0.0);
-    }
-
     // Autonomous routine using Ivy Command Groups matching your requirements
     public Command autoRoutine() {
         return sequential(
                 // SHOOT then Follow Path 1
-                instant(() -> shooter.setVelocity(shooterVelocity)),
+                instant(() -> tools.shooterOn()),
                 waitMs(5000),
 
-                instant(() -> gate.setPosition(1)),
+                instant(() -> tools.gateOpen()),
                 waitMs(2000),
-                instant(() -> gate.setPosition(0)),
+                instant(() -> tools.gateClose()),
 
                 // Follow Path 2 while INTAKE is active
                 waitMs(500),
-                instant(() -> intake.setPower(1)),
+                instant(() -> tools.intakeOn()),
                 follow(follower, path1()),
                 follow(follower, path2()),
 
@@ -96,21 +70,21 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
                 follow(follower, path4()),
 
                 // SHOOT again
-                instant(() -> shooter.setVelocity(shooterVelocity)),
+                instant(() -> tools.shooterOn()),
                 waitMs(2000),
 
-                instant(() -> gate.setPosition(1)),
+                instant(() -> tools.gateOpen()),
                 waitMs(2000),
-                instant(() -> gate.setPosition(0)),
+                instant(() -> tools.gateClose()),
 
                 waitMs(500),
 
                 // Follow Path 5
-                instant(this::setIdle),
+                instant(() -> tools.idle()),
                 follow(follower, path5()),
 
                 // Turn off everything once the final path completes
-                instant(this::setComplete)
+                instant(() -> tools.off())
         );
     }
 
@@ -118,19 +92,11 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
     public void runOpMode() {
         Scheduler.reset();
 
-        // Hardware mapping
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
-        gate = hardwareMap.get(Servo.class, "gate");
-
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        shooter.setDirection(DcMotor.Direction.FORWARD);
-
         follower = Constants.create(hardwareMap);
         follower.setPose(start);
         follower.update();
 
-        gate.setPosition(0);
+        tools = new TejToolClass(hardwareMap, gamepad1, telemetry);
 
         waitForStart();
 
@@ -142,7 +108,6 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
             Scheduler.execute();
 
             // Telemetry updates
-            telemetry.addData("Robot State", robotState);
             telemetry.addData("x", follower.pose().x());
             telemetry.addData("y", follower.pose().y());
             telemetry.addData("heading", follower.pose().heading());

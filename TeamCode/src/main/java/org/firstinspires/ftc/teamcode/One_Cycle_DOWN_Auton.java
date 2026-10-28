@@ -26,21 +26,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 @Autonomous(name = "One_Cycle_DOWN_Auton", group = "Autonomous")
 public class One_Cycle_DOWN_Auton extends LinearOpMode {
     private Follower follower;
-
-    // Hardware components for mechanisms
-    private Servo gate = null;
-    private DcMotor intake = null;
-    private DcMotorEx shooter = null;
-
-    //Shooter constants
-    private int shooterVelocity = 2090;
-    private int PreShootInterval = 300;
-    private int PostShootInterval = 150;
-
-    private int waitTime = 10000;
-
-    // State tracking for telemetry
-    private String robotState = "IDLE";
+    private TejToolClass tools;
 
     //PedroPathing Poses
     private final PoseFactory poseFactory = PoseFactory.degrees();
@@ -51,44 +37,24 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
     private final Pose point2 = poseFactory.of(12.6565, 91.7063, 90);
     private final Pose point2Control1 = poseFactory.of(19.2657, 34.256, 0);
 
-    // Mechanism state helper methods with state tracking
-    private void setIdle() {
-        robotState = "IDLE";
-        gate.setPosition(0);
-        intake.setPower(0.0);
-        shooter.setVelocity(shooterVelocity);
-    }
-    private void setIntake() {
-        robotState = "INTAKE";
-        gate.setPosition(0);
-        intake.setPower(1.0);
-        shooter.setVelocity(shooterVelocity);
-    }
-    private void setComplete() {
-        robotState = "Complete";
-        gate.setPosition(0);
-        intake.setPower(0.0);
-        shooter.setPower(0.0);
-    }
-
     // Autonomous routine using Ivy Command Groups matching your requirements
     public Command autoRoutine() {
         return sequential(
-                waitMs(waitTime - 5000),
-
-                instant(() -> shooter.setVelocity(shooterVelocity)),
                 waitMs(5000),
 
-                instant(() -> gate.setPosition(1)),
+                instant(() -> tools.shooterOn()),
+                waitMs(5000),
+
+                instant(() -> tools.gateOpen()),
                 waitMs(2000),
-                instant(() -> gate.setPosition(0)),
+                instant(() -> tools.gateClose()),
 
                 //Follow path 1 until parked
                 waitMs(500),
                 follow(follower, path1()),
                 follow(follower, path2()),
                 //Turn off everything once the final path completes
-                instant(this::setComplete)
+                instant(() -> tools.off())
         );
     }
 
@@ -97,12 +63,7 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
         Scheduler.reset();
 
         // Hardware mapping
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
-        gate = hardwareMap.get(Servo.class, "gate");
-
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        shooter.setDirection(DcMotor.Direction.FORWARD);
+        tools = new TejToolClass(hardwareMap, gamepad1, telemetry);
 
         follower = Constants.create(hardwareMap);
         follower.setPose(start);
@@ -118,7 +79,6 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
             Scheduler.execute();
 
             // Telemetry updates
-            telemetry.addData("Robot State", robotState);
             telemetry.addData("x", follower.pose().x());
             telemetry.addData("y", follower.pose().y());
             telemetry.addData("heading", follower.pose().heading());
