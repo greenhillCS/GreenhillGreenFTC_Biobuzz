@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.Position_Storage;
 
 
 @TeleOp(name="TejTeleop", group="Linear OpMode")
@@ -30,6 +31,8 @@ public class TejTeleop extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         follower = Constants.create(hardwareMap);
+        follower.setPose(Position_Storage.pos);
+        follower.update();
 
         tools = new TejToolClass(hardwareMap, gamepad1, telemetry);
 

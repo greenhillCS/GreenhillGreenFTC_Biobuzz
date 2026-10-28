@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.Position_Storage;
 
 @TeleOp(name="TejTeleop2", group="Linear OpMode")
 public class TejTeleop2 extends LinearOpMode {
@@ -23,6 +24,8 @@ public class TejTeleop2 extends LinearOpMode {
     public void runOpMode() {
 
         follower = Constants.create(hardwareMap);
+        follower.setPose(Position_Storage.pos);
+        follower.update();
 
         tools = new TejToolClass(hardwareMap, gamepad1, telemetry);
 

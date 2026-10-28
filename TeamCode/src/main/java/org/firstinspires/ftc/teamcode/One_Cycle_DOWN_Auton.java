@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.Position_Storage;
 
 @Autonomous(name = "One_Cycle_DOWN_Auton", group = "Autonomous")
 public class One_Cycle_DOWN_Auton extends LinearOpMode {
@@ -78,6 +79,8 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
             follower.update();
             Scheduler.execute();
 
+            Position_Storage.pos = follower.pose();
+
             // Telemetry updates
             telemetry.addData("x", follower.pose().x());
             telemetry.addData("y", follower.pose().y());
@@ -90,6 +93,7 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
 
             telemetry.update();
         }
+        Position_Storage.pos = follower.pose();
     }
     public Path path1() {
         return Paths.line(start, path1).constant(path1);
