@@ -52,7 +52,7 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
     public Command autoRoutine() {
         return sequential(
                 // SHOOT then Follow Path 1
-                instant(() -> tools.shooterOn()),
+                instant(() -> tools.shooterOn(true)),
                 waitMs(5000),
 
                 instant(() -> tools.gateOpen()),
@@ -71,7 +71,7 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
                 follow(follower, path4()),
 
                 // SHOOT again
-                instant(() -> tools.shooterOn()),
+                instant(() -> tools.shooterOn(true)),
                 waitMs(2000),
 
                 instant(() -> tools.gateOpen()),

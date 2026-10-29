@@ -10,7 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TejToolClass {
-    private int shooterVelocity = 2100;
+    private int shooterVelocityTeleOp = 2080;
+    private int shooterVelocityAuton = 2100;
     private double intakePower = 1;
     private double gatePos = 1;
     private HardwareMap hardwareMap;
@@ -57,7 +58,14 @@ public class TejToolClass {
         telemetry.update();
     }
     public void shooterOn(){
-        shooter.setVelocity(shooterVelocity);
+        shooter.setVelocity(shooterVelocityTeleOp);
+    }
+    public void shooterOn(boolean isAuton){
+        if (isAuton){
+            shooter.setVelocity(shooterVelocityAuton);
+        }else {
+            shooter.setVelocity(shooterVelocityTeleOp);
+        }
     }
     public void shooterOff(){
         shooter.setVelocity(0);
@@ -125,11 +133,11 @@ public class TejToolClass {
         }
 
         if (gamepad.leftBumperWasPressed()) {
-            shooterVelocity -= 10;
+            shooterVelocityTeleOp -= 10;
         }
 
         if (gamepad.rightBumperWasPressed()) {
-            shooterVelocity += 10;
+            shooterVelocityTeleOp += 10;
         }
 
         //Gate Logic -------------------------------------------------------------------------------
@@ -139,7 +147,7 @@ public class TejToolClass {
         }else{
             gateClose();
         }
-        telemetry.addData("Velocity", shooterVelocity);
+        telemetry.addData("Velocity", shooterVelocityTeleOp);
     }
     public void update2(){
         // --- State Switching using Dpad ---
@@ -203,18 +211,18 @@ public class TejToolClass {
 
         // Change shoot speed with Bumpers/Triggers
         if (gamepad.leftBumperWasPressed()) {
-            shooterVelocity -= 10;
+            shooterVelocityTeleOp -= 10;
         }
 
         if (gamepad.rightBumperWasPressed()) {
-            shooterVelocity += 10;
+            shooterVelocityTeleOp += 10;
         }
         if (gamepad.leftTriggerWasPressed()) {
-            shooterVelocity -= 100;
+            shooterVelocityTeleOp -= 100;
         }
 
         if (gamepad.rightTriggerWasPressed()) {
-            shooterVelocity += 100;
+            shooterVelocityTeleOp += 100;
         }
 
 
@@ -222,6 +230,6 @@ public class TejToolClass {
         telemetry.addData("Timer", timer.toString());
         telemetry.addData("Robot State", currentRobotState);
         telemetry.addData("Servo State", currentServoState);
-        telemetry.addData("Shooter Velocity Target", shooterVelocity);
+        telemetry.addData("Shooter Velocity Target", shooterVelocityTeleOp);
     }
 }

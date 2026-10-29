@@ -43,7 +43,7 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
         return sequential(
                 waitMs(5000),
 
-                instant(() -> tools.shooterOn()),
+                instant(() -> tools.shooterOn(true)),
                 waitMs(5000),
 
                 instant(() -> tools.gateOpen()),
