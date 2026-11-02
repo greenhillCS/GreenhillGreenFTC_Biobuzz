@@ -4,19 +4,21 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TejToolClass {
-    private int shooterVelocityTeleOp = 2080;
-    private int shooterVelocityAuton = 2100;
+    private int shooterVelocityTeleOp = 2075;
+    private int shooterVelocityAuton = 2095;
     private double intakePower = 1;
     private double gatePos = 1;
     private HardwareMap hardwareMap;
     private Gamepad gamepad;
     private Telemetry telemetry;
+    private PIDF pidf;
     private DcMotor intake;
     private DcMotorEx shooter;
     private Servo gate;
@@ -42,14 +44,20 @@ public class TejToolClass {
     }
     private ServoState currentServoState = ServoState.GATE_CLOSED;
     private RobotState currentRobotState = RobotState.INTAKE;
+
+
     private ElapsedTime timer = new ElapsedTime();
     public TejToolClass (HardwareMap hardwareMap, Gamepad gamepad, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
         this.gamepad = gamepad;
         this.telemetry = telemetry;
 
+        pidf = new PIDF(15, 0, 0.015, 12.5);
+
         intake = hardwareMap.get(DcMotor.class, "intake"); // Port 0
         shooter = hardwareMap.get(DcMotorEx.class,"shooter"); // Port 1
+        double[] pids = pidf.getPID();
+        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(pids[0], pids[1], pids[2], pids[3]));
         gate = hardwareMap.get(Servo.class, "gate"); // Port 5 (Expansion hub)
         gate.setPosition(0);
 
@@ -66,6 +74,9 @@ public class TejToolClass {
         }else {
             shooter.setVelocity(shooterVelocityTeleOp);
         }
+    }
+    public void shooterOn(int velo){
+        shooter.setVelocity(velo);
     }
     public void shooterOff(){
         shooter.setVelocity(0);
@@ -147,7 +158,7 @@ public class TejToolClass {
         }else{
             gateClose();
         }
-        telemetry.addData("Velocity", shooterVelocityTeleOp);
+        telemetry.addData("Shooter Velocity Target", shooterVelocityTeleOp);
     }
     public void update2(){
         // --- State Switching using Dpad ---
@@ -231,5 +242,14 @@ public class TejToolClass {
         telemetry.addData("Robot State", currentRobotState);
         telemetry.addData("Servo State", currentServoState);
         telemetry.addData("Shooter Velocity Target", shooterVelocityTeleOp);
+    }
+    public void updatePID(){
+        pidf.tuner(gamepad, telemetry);
+        double[] pids = pidf.getPID();
+        shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(pids[0], pids[1], pids[2], pids[3]));
+
+        update1();
+        telemetry.addData("Shooter Velocity Target", shooterVelocityTeleOp);
+        telemetry.addData("Shooter Velocity Current", shooter.getVelocity());
     }
 }
