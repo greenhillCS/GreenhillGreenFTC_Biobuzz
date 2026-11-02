@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -48,6 +49,11 @@ public class TejTeleop2 extends LinearOpMode {
             tools.update2();
 
             // Show telemetry data
+            Pose robotPose = follower.pose();
+
+            telemetry.addData("Robot X", robotPose.x());
+            telemetry.addData("Robot Y", robotPose.y());
+            telemetry.addData("Robot Heading", Math.toDegrees(robotPose.heading()));
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
         }

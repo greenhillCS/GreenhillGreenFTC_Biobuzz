@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -57,7 +58,13 @@ public class TejTeleop extends LinearOpMode {
             follower.update();
 
             // Show the elapsed game time and wheel power.
+            Pose robotPose = follower.pose();
+
+            telemetry.addData("Robot X", robotPose.x());
+            telemetry.addData("Robot Y", robotPose.y());
+            telemetry.addData("Robot Heading", Math.toDegrees(robotPose.heading()));
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+
             telemetry.update();
         }
     }}
