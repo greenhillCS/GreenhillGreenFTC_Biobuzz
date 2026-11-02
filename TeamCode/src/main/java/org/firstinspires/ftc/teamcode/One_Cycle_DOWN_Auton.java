@@ -35,7 +35,7 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
 
     private final Pose start = poseFactory.of(61.3242, 131.9962, 90);
     private final Pose path1 = poseFactory.of(59.1798, 34.4101, 90);
-    private final Pose point2 = poseFactory.of(12.6565, 91.7063, 90);
+    private final Pose point2 = poseFactory.of(15, 91.7063, 90);
     private final Pose point2Control1 = poseFactory.of(19.2657, 34.256, 0);
 
     // Autonomous routine using Ivy Command Groups matching your requirements
