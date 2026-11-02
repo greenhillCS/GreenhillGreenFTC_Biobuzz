@@ -1,0 +1,65 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.pedropathing.follower.Follower;
+import com.pedropathing.follower.ManualDrive;
+import com.pedropathing.math.Pose;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.Position_Storage;
+
+
+@TeleOp(name="TestPIDTeleop", group="Linear OpMode")
+
+public class TestPIDTeleOp extends LinearOpMode {
+
+    private ElapsedTime runtime = new ElapsedTime();
+    private Follower follower;
+
+    private TejToolClass tools;
+
+
+    @Override
+    public void runOpMode() {
+
+        // Initialize the hardware variables. Note that the strings used here must correspond
+        // to the names assigned during the robot configuration step on the DS or RC devices.
+        follower = Constants.create(hardwareMap);
+        follower.setPose(Position_Storage.pos);
+        follower.update();
+
+        tools = new TejToolClass(hardwareMap, gamepad1, telemetry);
+
+        // Wait for the game to start (driver presses START)
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+        waitForStart();
+        runtime.reset();
+
+        // run until the end of the match (driver presses STOP)
+        while (opModeIsActive()) {
+
+            tools.updatePID();
+
+            ManualDrive.driveOrHold(
+                    follower,
+                    -gamepad1.left_stick_y,
+                    -gamepad1.left_stick_x,
+                    -gamepad1.right_stick_x
+            );
+            follower.update();
+
+            // Show the elapsed game time and wheel power.
+            Pose robotPose = follower.pose();
+
+            telemetry.addData("Robot X", robotPose.x());
+            telemetry.addData("Robot Y", robotPose.y());
+            telemetry.addData("Robot Heading", Math.toDegrees(robotPose.heading()));
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+
+            telemetry.update();
+        }
+    }}
