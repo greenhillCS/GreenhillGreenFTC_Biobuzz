@@ -33,7 +33,7 @@ public class Auton_Tester extends LinearOpMode {
     private DcMotorEx shooter = null;
 
     //Shooter constants
-    private int shooterVelocity = 2090;
+    private int shooterVelocity = 2100;
     private int PreShootInterval = 300;
     private int PostShootInterval = 150;
 
