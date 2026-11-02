@@ -27,65 +27,92 @@ import org.firstinspires.ftc.teamcode.pedro.Position_Storage;
 @Autonomous(name = "Two_Cycle_UP_Auton", group = "Autonomous")
 public class Two_Cycle_UP_Auton extends LinearOpMode {
     private Follower follower;
-    private TejToolClass tools;
+
+    // Hardware components for mechanismsg
+    private Servo gate = null;
+    private DcMotor intake = null;
+    private DcMotorEx shooter = null;
+
+    //Shooter constants
+    private int shooterVelocity = 2100;
+    private int PreShootInterval = 300;
+    private int PostShootInterval = 150;
+
+    // State tracking for telemetry
+    private String robotState = "IDLE";
 
     //PedroPathing Poses
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
 
-    private final Pose start = poseFactory.of(52.7319, 9.7271, 270);
-    private final Pose point1 = poseFactory.of(24.2271, 9.2729, 180);
+    private final Pose start = poseFactory.of(54.549, 9.5, 270);
+    private final Pose point1 = poseFactory.of(10.8266, 23.809, 270);
     private final Pose point1Control1 = poseFactory.of(49.7408, 20.0226, 0);
-    private final Pose point2 = poseFactory.of(9.2729, 9.2729, 180);
-    private final Pose point3Start = poseFactory.of(9.2729, 9.2729, 180);
+    private final Pose point2Start = poseFactory.of(10.8266, 23.809, 270);
+    private final Pose point2 = poseFactory.of(9.7271, 9.7271, 268);
+    private final Pose point3Start = poseFactory.of(9.7271, 9.7271, 268);
     private final Pose point3 = poseFactory.of(61, 120, 90);
-    private final Pose point3Control1 = poseFactory.of(40.2087, 26.4583, 0);
-    private final Pose point3Control2 = poseFactory.of(10.1364, 121.3555, 0);
-    private final Pose point4 = poseFactory.of(61, 131.5, 90);
+    private final Pose point3Control1 = poseFactory.of(49.748, 23.5056, 0);
+    private final Pose point3Control2 = poseFactory.of(9.9093, 125.6709, 0);
+    private final Pose point4Start = poseFactory.of(61, 120, 90);
+    private final Pose point4 = poseFactory.of(61, 131.5, 92);
     private final Pose point5Start = poseFactory.of(61, 131.5, 90);
-    private final Pose point5 = poseFactory.of(10.553, 121.2961, 0);
+    private final Pose point5 = poseFactory.of(15, 121.2961, 0);
     private final Pose point5Control1 = poseFactory.of(61.0915, 110.2994, 0);
     private final Pose point5Control2 = poseFactory.of(25.1581, 120.5923, 0);
     private final Pose point5Control3 = poseFactory.of(34.5963, 115.5136, 0);
+    // Mechanism state helper methods with state tracking
+    private void setIdle() {
+        robotState = "IDLE";
+        gate.setPosition(0);
+        intake.setPower(0.0);
+        shooter.setVelocity(shooterVelocity);
+    }
+    private void setComplete() {
+        robotState = "Complete";
+        gate.setPosition(0);
+        intake.setPower(0.0);
+        shooter.setPower(0.0);
+    }
 
     // Autonomous routine using Ivy Command Groups matching your requirements
     public Command autoRoutine() {
         return sequential(
                 // SHOOT then Follow Path 1
-                instant(() -> tools.shooterOn(true)),
+                instant(() -> shooter.setVelocity(shooterVelocity)),
                 waitMs(5000),
 
-                instant(() -> tools.gateOpen()),
+                instant(() -> gate.setPosition(1)),
                 waitMs(2000),
-                instant(() -> tools.gateClose()),
+                instant(() -> gate.setPosition(0)),
 
                 // Follow Path 2 while INTAKE is active
                 waitMs(500),
-                instant(() -> tools.intakeOn()),
+                instant(() -> intake.setPower(1)),
                 follow(follower, path1()),
                 follow(follower, path2()),
 
                 // Follow Path 3 and Path 4
-                waitMs(1000),
+                waitMs(2000),
                 follow(follower, path3()),
                 follow(follower, path4()),
 
                 // SHOOT again
-                instant(() -> tools.shooterOn(true)),
+                instant(() -> shooter.setVelocity(shooterVelocity)),
                 waitMs(2000),
 
-                instant(() -> tools.gateOpen()),
+                instant(() -> gate.setPosition(1)),
                 waitMs(2000),
-                instant(() -> tools.gateClose()),
+                instant(() -> gate.setPosition(0)),
 
                 waitMs(500),
 
                 // Follow Path 5
-                instant(() -> tools.idle()),
+                instant(this::setIdle),
                 follow(follower, path5()),
 
                 // Turn off everything once the final path completes
-                instant(() -> tools.off())
+                instant(this::setComplete)
         );
     }
 
@@ -93,11 +120,19 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
     public void runOpMode() {
         Scheduler.reset();
 
+        // Hardware mapping
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
+        gate = hardwareMap.get(Servo.class, "gate");
+
+        intake.setDirection(DcMotor.Direction.FORWARD);
+        shooter.setDirection(DcMotor.Direction.FORWARD);
+
         follower = Constants.create(hardwareMap);
         follower.setPose(start);
         follower.update();
 
-        tools = new TejToolClass(hardwareMap, gamepad1, telemetry);
+        gate.setPosition(0);
 
         waitForStart();
 
@@ -108,9 +143,8 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
             follower.update();
             Scheduler.execute();
 
-            Position_Storage.pos = follower.pose();
-
             // Telemetry updates
+            telemetry.addData("Robot State", robotState);
             telemetry.addData("x", follower.pose().x());
             telemetry.addData("y", follower.pose().y());
             telemetry.addData("heading", follower.pose().heading());
@@ -122,7 +156,6 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
 
             telemetry.update();
         }
-        Position_Storage.pos = follower.pose();
     }
 
     public Path path1() {
@@ -130,7 +163,7 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
     }
 
     public Path path2() {
-        return Paths.line(point1, point2).tangent();
+        return Paths.line(point2Start, point2).linear(point2Start, point2);
     }
 
     public Path path3() {
@@ -138,7 +171,7 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
     }
 
     public Path path4() {
-        return Paths.line(point3, point4).constant(point4);
+        return Paths.line(point4Start, point4).linear(point4Start, point4);
     }
 
     public Path path5() {
