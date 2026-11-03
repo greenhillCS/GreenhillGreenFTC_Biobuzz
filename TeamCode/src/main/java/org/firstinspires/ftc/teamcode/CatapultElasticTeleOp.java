@@ -31,14 +31,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class CatapultElasticTeleOp extends LinearOpMode {
 
     // ---------------- Motor / geometry ----------------
-    static final double TICKS_PER_MOTOR_REV = 537.7; // goBILDA 312 RPM
+//    static final double TICKS_PER_MOTOR_REV = 537.7; // goBILDA 312 RPM
+    static final double TICKS_PER_MOTOR_REV = 1425.1; // goBILDA 117 motor
     static final double GEAR_RATIO = 1.0;            // arm teeth / motor teeth (1.0 = direct drive)
-    static final double SWING_DEGREES = 60.0;        // how far back the motor pulls the arm
+    static final double SWING_DEGREES = 20.0;        // how far back the motor pulls the arm
 
     // ---------------- Power settings ----------------
     static final double COCK_POWER = 1.0;        // max power used to pull back against the bands
     static final double FIRE_ASSIST_POWER = 1.0; // motor pushes forward with the bands; try 0.0 to compare
-    static final double UNCOCK_DEG_PER_SEC = 30.0; // how slowly X lets the arm back down
+    static final double UNCOCK_DEG_PER_SEC = 20.0; // how slowly X lets the arm back down
 
     // ---------------- Timing / safety ----------------
     static final int    BRAKE_EARLY_TICKS = 0;   // raise if the arm slams too hard past the stop
@@ -173,10 +174,18 @@ public class CatapultElasticTeleOp extends LinearOpMode {
                 }
             }
 
+            if (gamepad1.rightBumperWasPressed()){
+                cockTicks += degreesToTicks(1.0);
+            }
+            if (gamepad1.leftBumperWasPressed()){
+                cockTicks -= degreesToTicks(1.0);
+            }
+
             telemetry.addData("State", state);
             telemetry.addData("Position (ticks)", catapult.getCurrentPosition());
             telemetry.addData("Arm angle back (deg)", "%.1f", ticksToDegrees(catapult.getCurrentPosition()));
             telemetry.addData("Velocity (ticks/s)", "%.0f", catapult.getVelocity());
+            telemetry.addData("Cock target (ticks)", cockTicks);
             if (!warning.isEmpty()) telemetry.addData("WARNING", warning);
             telemetry.update();
         }
