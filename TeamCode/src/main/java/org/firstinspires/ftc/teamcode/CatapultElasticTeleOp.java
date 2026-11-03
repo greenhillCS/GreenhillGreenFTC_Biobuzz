@@ -32,7 +32,9 @@ public class CatapultElasticTeleOp extends LinearOpMode {
 
     // ---------------- Motor / geometry ----------------
 //    static final double TICKS_PER_MOTOR_REV = 537.7; // goBILDA 312 RPM
-    static final double TICKS_PER_MOTOR_REV = 1425.1; // goBILDA 117 motor
+//    static final double TICKS_PER_MOTOR_REV = 1425.1; // goBILDA 117 motor
+
+    static final double TICKS_PER_MOTOR_REV = 5281.1;// goBILDA 30 rpm motor
     static final double GEAR_RATIO = 1.0;            // arm teeth / motor teeth (1.0 = direct drive)
     static final double SWING_DEGREES = 20.0;        // how far back the motor pulls the arm
 
