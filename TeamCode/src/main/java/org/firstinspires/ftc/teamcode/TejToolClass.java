@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -56,6 +57,7 @@ public class TejToolClass {
 
         intake = hardwareMap.get(DcMotor.class, "intake"); // Port 0
         shooter = hardwareMap.get(DcMotorEx.class,"shooter"); // Port 1
+//        shooter.setDirection(DcMotorSimple.Direction.REVERSE);
         double[] pids = pidf.getPID();
         shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(pids[0], pids[1], pids[2], pids[3]));
         gate = hardwareMap.get(Servo.class, "gate"); // Port 5 (Expansion hub)
