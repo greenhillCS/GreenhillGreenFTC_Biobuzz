@@ -12,11 +12,11 @@ public class Kirana_Toolclass {
     private DcMotorEx shooter = null;
     private Servo gate = null;
     Kirana_Toolclass(){
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
+        intake = hardwareMap.get(DcMotorEx.class, "wheel_intake");
         intake.setDirection(DcMotorEx.Direction.FORWARD);
-        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
+        shooter = hardwareMap.get(DcMotorEx.class, "wheel_shooter");
         shooter.setDirection(DcMotorSimple.Direction.FORWARD);
-        gate = hardwareMap.get(Servo.class, "gate");
+        gate = hardwareMap.get(Servo.class, "gate_servo");
 
 
     }

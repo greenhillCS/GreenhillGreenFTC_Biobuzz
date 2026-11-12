@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.KiranaCode;
 import org.firstinspires.ftc.teamcode.KiranaCode.Kirana_Toolclass;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -147,20 +148,20 @@ public class Kirana_TeleOp extends LinearOpMode {
 
             if (gamepad1.right_bumper){
                 shooterVelocity += 10;
-                telemetry.addData("Shooter Velocity: " + shooterVelocity);
+                telemetry.addData("Shooter Velocity: ", shooterVelocity);
             }
             if (gamepad1.left_bumper){
                 shooterVelocity -= 10;
-                telemetry.addData("Shooter Velocity: " + shooterVelocity);
+                telemetry.addData("Shooter Velocity: ", shooterVelocity);
             }
 
             if (gamepad1.xWasReleased()){
                 toolclass.gateOpen();
-                telemetry.addData("Gate Open: True");
+                telemetry.addData("Status", "Gate Open: True");
             }
             if (gamepad1.aWasReleased()){
                 toolclass.gateClose();
-                telemetry.addData("Gate Open: False");
+                telemetry.addData("Status", "Gate Open: False");
             }
             telemetry.update();
         }
