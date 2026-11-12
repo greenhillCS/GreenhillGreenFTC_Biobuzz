@@ -54,6 +54,8 @@ public class Kirana_TeleOp extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     static int shooterVelocity = 1760;
+    boolean activateIntakeUp = false;
+    boolean activateIntakeDown = false;
     private DcMotor frontLeftDrive = null;
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
@@ -131,8 +133,7 @@ public class Kirana_TeleOp extends LinearOpMode {
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
 
             //Shooter Code Start
-            boolean activateIntakeUp = false;
-            boolean activateIntakeDown = false;
+
             if (gamepad1.dpadUpWasPressed()){
                 activateIntakeUp = !activateIntakeUp;
             }
@@ -141,18 +142,19 @@ public class Kirana_TeleOp extends LinearOpMode {
             }
             if (activateIntakeUp){
                 toolclass.intakeOn();
+                telemetry.addData("Status", "Intake: intaking");
+
             }
             if (activateIntakeDown){
                 toolclass.intakeReverse();
+                telemetry.addData("Status", "Intake: outaking");
             }
-
+            telemetry.addData("Shooter Velocity: ", shooterVelocity);
             if (gamepad1.right_bumper){
                 shooterVelocity += 10;
-                telemetry.addData("Shooter Velocity: ", shooterVelocity);
             }
             if (gamepad1.left_bumper){
                 shooterVelocity -= 10;
-                telemetry.addData("Shooter Velocity: ", shooterVelocity);
             }
 
             if (gamepad1.xWasReleased()){
