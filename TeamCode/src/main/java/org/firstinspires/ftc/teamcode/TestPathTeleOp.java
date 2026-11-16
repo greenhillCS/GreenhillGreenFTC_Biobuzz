@@ -27,6 +27,7 @@ public class TestPathTeleOp extends LinearOpMode {
     STATES state = STATES.DRIVING;
 
     private TejToolClass tools;
+    private TejPathClass path;
 
 
     @Override
@@ -39,6 +40,7 @@ public class TestPathTeleOp extends LinearOpMode {
         follower.update();
 
         tools = new TejToolClass(hardwareMap, gamepad1, telemetry);
+        path = new TejPathClass(follower, gamepad1);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -49,38 +51,30 @@ public class TestPathTeleOp extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+            Position_Storage.pos = new Pose((double) follower.pose().x(), (double) follower.pose().y(), (double) follower.pose().heading());
+
             switch(follower.mode()) {
                 case MANUAL:
                 case IDLE:
                 case HOLD:
                     tools.update1();
 
-//                    DrivePowers powers = ManualDrive.fieldCentric(
-//                            -gamepad1.left_stick_y,
-//                            -gamepad1.left_stick_x,
-//                            -gamepad1.right_stick_x,
-//                            follower.pose().heading()
-//                    );
-//                    ManualDrive.driveOrHold(follower, powers);
-                    ManualDrive.driveOrHold(
-                            follower,
+                    DrivePowers powers = ManualDrive.fieldCentric(
                             -gamepad1.left_stick_y,
                             -gamepad1.left_stick_x,
-                            -gamepad1.right_stick_x
+                            -gamepad1.right_stick_x,
+                            follower.pose().heading()
                     );
+                    ManualDrive.driveOrHold(follower, powers);
+//                    ManualDrive.driveOrHold(
+//                            follower,
+//                            -gamepad1.left_stick_y,
+//                            -gamepad1.left_stick_x,
+//                            -gamepad1.right_stick_x
+//                    );
 
-                    if (gamepad1.dpadLeftWasPressed()) {
-                        follower.idle();
-                        Pose corner = new Pose(9, 9, Math.toRadians(-90));
-                        follower.setPose(corner);
-                        follower.hold(corner);
-                    } else if (gamepad1.dpadDownWasPressed()) {
-                        follower.idle();
-                        follower.hold(new Pose(54, 9, Math.toRadians(-90)));
-                    } else if (gamepad1.dpadUpWasPressed()) {
-                        follower.idle();
-                        follower.hold(new Pose(66, 132, Math.toRadians(90)));
-                    }
+                    path.update();
 
                     follower.update();
                     break;

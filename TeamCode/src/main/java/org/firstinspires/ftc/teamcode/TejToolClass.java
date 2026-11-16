@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TejToolClass {
-    private int shooterVelocityTeleOp = 2075;
-    private int shooterVelocityAuton = 2095;
+    private int shooterVelocityTeleOp = 1860;
+    private int shooterVelocityAuton = 1880;
     private double intakePower = 1;
     private double gatePos = 1;
     private HardwareMap hardwareMap;
@@ -23,6 +23,7 @@ public class TejToolClass {
     private DcMotor intake;
     private DcMotorEx shooter;
     private Servo gate;
+    private Servo flowerServo;
 
     //Update 1 Variables
     private boolean intakeReverse = false;
@@ -61,7 +62,9 @@ public class TejToolClass {
         double[] pids = pidf.getPID();
         shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(pids[0], pids[1], pids[2], pids[3]));
         gate = hardwareMap.get(Servo.class, "gate"); // Port 5 (Expansion hub)
-        gate.setPosition(0);
+        gateClose();
+        flowerServo = hardwareMap.get(Servo.class, "flower");
+        flowerUp();
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -117,6 +120,28 @@ public class TejToolClass {
         gateClose();
         shooterOff();
     }
+    public void flowerUp(){
+        flowerServo.setPosition(1);
+    }
+    public void flowerDown(){
+        flowerServo.setPosition(0.32);
+    }
+    public void updateFlower(){
+        if(gamepad.x){
+            flowerDown();
+        }else{
+            flowerUp();
+        }
+    }
+    public void updateVelo(){
+        if (gamepad.leftBumperWasPressed()) {
+            shooterVelocityTeleOp -= 10;
+        }
+
+        if (gamepad.rightBumperWasPressed()) {
+            shooterVelocityTeleOp += 10;
+        }
+    }
     public void update1(){
 
         //Intake Logic -----------------------------------------------------------------------------
@@ -145,14 +170,6 @@ public class TejToolClass {
             shooterOff();
         }
 
-        if (gamepad.leftBumperWasPressed()) {
-            shooterVelocityTeleOp -= 10;
-        }
-
-        if (gamepad.rightBumperWasPressed()) {
-            shooterVelocityTeleOp += 10;
-        }
-
         //Gate Logic -------------------------------------------------------------------------------
 
         if(gamepad.b) {
@@ -161,6 +178,7 @@ public class TejToolClass {
             gateClose();
         }
         telemetry.addData("Shooter Velocity Target", shooterVelocityTeleOp);
+        updateFlower();
     }
     public void update2(){
         // --- State Switching using Dpad ---
@@ -222,21 +240,7 @@ public class TejToolClass {
                 break;
         }
 
-        // Change shoot speed with Bumpers/Triggers
-        if (gamepad.leftBumperWasPressed()) {
-            shooterVelocityTeleOp -= 10;
-        }
-
-        if (gamepad.rightBumperWasPressed()) {
-            shooterVelocityTeleOp += 10;
-        }
-        if (gamepad.leftTriggerWasPressed()) {
-            shooterVelocityTeleOp -= 100;
-        }
-
-        if (gamepad.rightTriggerWasPressed()) {
-            shooterVelocityTeleOp += 100;
-        }
+        updateFlower();
 
 
         // Show telemetry data
@@ -250,6 +254,7 @@ public class TejToolClass {
         double[] pids = pidf.getPID();
         shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(pids[0], pids[1], pids[2], pids[3]));
 
+        updateVelo();
         update1();
         telemetry.addData("Shooter Velocity Target", shooterVelocityTeleOp);
         telemetry.addData("Shooter Velocity Current", shooter.getVelocity());
