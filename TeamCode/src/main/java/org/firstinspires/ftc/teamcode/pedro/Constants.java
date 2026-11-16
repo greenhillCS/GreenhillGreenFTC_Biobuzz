@@ -18,6 +18,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
 
+    public static double robotWidth = 17.25;//inches
+    public static double robotFrontDepth = 9.7;//inches
+    public static double robotBackDepth = 8.3;//inches
+    public static double robotDepth = robotFrontDepth + robotBackDepth;
+
     public static PinpointConfig localizerConfig = new PinpointConfig(c -> {
         c.name.set("pinpoint");
         c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
