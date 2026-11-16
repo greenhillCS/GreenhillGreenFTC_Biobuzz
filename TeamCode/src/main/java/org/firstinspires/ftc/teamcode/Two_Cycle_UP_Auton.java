@@ -34,7 +34,7 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
     private DcMotorEx shooter = null;
 
     //Shooter constants
-    private int shooterVelocity = 2100;
+    private int shooterVelocity = 1880;
     private int PreShootInterval = 300;
     private int PostShootInterval = 150;
 
@@ -45,7 +45,7 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
 
-    private final Pose start = poseFactory.of(54.549, 9.5, 270);
+    private final Pose start = poseFactory.of(55.7628, 9.7, 270);
     private final Pose point1 = poseFactory.of(10.8266, 23.809, 270);
     private final Pose point1Control1 = poseFactory.of(49.7408, 20.0226, 0);
     private final Pose point2Start = poseFactory.of(10.8266, 23.809, 270);
@@ -95,6 +95,7 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
                 // Follow Path 3 and Path 4
                 waitMs(2000),
                 follow(follower, path3()),
+                instant(() -> intake.setPower(0)),
                 follow(follower, path4()),
 
                 // SHOOT again
@@ -140,6 +141,7 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
         schedule(autoRoutine());
 
         while (opModeIsActive()) {
+            Position_Storage.pos = new Pose((double) follower.pose().x(), (double) follower.pose().y(), (double) follower.pose().heading());
             follower.update();
             Scheduler.execute();
 

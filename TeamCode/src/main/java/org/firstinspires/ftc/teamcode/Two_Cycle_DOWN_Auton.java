@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.Position_Storage;
 
 @Disabled
 @Autonomous(name = "Two_Cycle_DOWN_Auton", group = "Autonomous")
@@ -25,7 +26,7 @@ public class Two_Cycle_DOWN_Auton extends LinearOpMode {
 
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
-    private final Pose start = poseFactory.of(60.5425, 132.2384, 90);
+    private final Pose start = poseFactory.of(63.5, 132.7, 90);
     private final Pose path1 = poseFactory.of(47.5963, 130.4848, 90);
     private final Pose path1Control1 = poseFactory.of(59.6565, 122.1541, 0);
     private final Pose path1Control2 = poseFactory.of(47.0385, 121.0369, 0);
@@ -56,6 +57,7 @@ public class Two_Cycle_DOWN_Auton extends LinearOpMode {
         schedule(autoRoutine());
 
         while (opModeIsActive()) {
+            Position_Storage.pos = new Pose((double) follower.pose().x(), (double) follower.pose().y(), (double) follower.pose().heading());
             follower.update();
             Scheduler.execute();
 

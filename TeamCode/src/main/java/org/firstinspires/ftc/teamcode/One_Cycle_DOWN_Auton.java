@@ -33,7 +33,7 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
 
-    private final Pose start = poseFactory.of(61.3242, 131.9962, 90);
+    private final Pose start = poseFactory.of(63.5, 132.7, 90);
     private final Pose path1 = poseFactory.of(59.1798, 34.4101, 90);
     private final Pose point2 = poseFactory.of(15, 91.7063, 90);
     private final Pose point2Control1 = poseFactory.of(19.2657, 34.256, 0);
@@ -76,6 +76,7 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
         schedule(autoRoutine());
 
         while (opModeIsActive()) {
+            Position_Storage.pos = new Pose((double) follower.pose().x(), (double) follower.pose().y(), (double) follower.pose().heading());
             follower.update();
             Scheduler.execute();
 
@@ -93,7 +94,6 @@ public class One_Cycle_DOWN_Auton extends LinearOpMode {
 
             telemetry.update();
         }
-        Position_Storage.pos = follower.pose();
     }
     public Path path1() {
         return Paths.line(start, path1).constant(path1);

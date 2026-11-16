@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.Position_Storage;
 
 @Autonomous(name = "One_Cycle_UP_Auton", group = "Autonomous")
 public class One_Cycle_UP_Auton extends LinearOpMode {
@@ -44,7 +45,7 @@ public class One_Cycle_UP_Auton extends LinearOpMode {
     private final PoseFactory poseFactory = PoseFactory.degrees();
 
 
-    private final Pose start = poseFactory.of(57.817, 10.2713, 270);
+    private final Pose start = poseFactory.of(55.7628, Constants.robotFrontDepth, 270);
     private final Pose path1 = poseFactory.of(11.7103, 90.7376, 0);
     private final Pose path1Control1 = poseFactory.of(22.7986, 40.7231, 0);
 
@@ -153,6 +154,7 @@ public class One_Cycle_UP_Auton extends LinearOpMode {
         schedule(autoRoutine());
 
         while (opModeIsActive()) {
+            Position_Storage.pos = new Pose((double) follower.pose().x(), (double) follower.pose().y(), (double) follower.pose().heading());
             follower.update();
             Scheduler.execute();
 
