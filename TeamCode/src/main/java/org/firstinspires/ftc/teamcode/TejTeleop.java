@@ -23,7 +23,10 @@ public class TejTeleop extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private Follower follower;
 
+    private Pose robotPose;
+
     private TejToolClass tools;
+    private TejPathClass path;
 
 
     @Override
@@ -36,6 +39,7 @@ public class TejTeleop extends LinearOpMode {
         follower.update();
 
         tools = new TejToolClass(hardwareMap, gamepad1, telemetry);
+        path = new TejPathClass(follower, gamepad1);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -47,6 +51,9 @@ public class TejTeleop extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
+            Position_Storage.pos = new Pose((double) follower.pose().x(), (double) follower.pose().y(), (double) follower.pose().heading());
+
+
             tools.update1();
 
             ManualDrive.driveOrHold(
@@ -55,10 +62,12 @@ public class TejTeleop extends LinearOpMode {
                     -gamepad1.left_stick_x,
                     -gamepad1.right_stick_x
             );
+
+            path.update();
+
             follower.update();
 
-            // Show the elapsed game time and wheel power.
-            Pose robotPose = follower.pose();
+            robotPose = follower.pose();
 
             telemetry.addData("Robot X", robotPose.x());
             telemetry.addData("Robot Y", robotPose.y());
