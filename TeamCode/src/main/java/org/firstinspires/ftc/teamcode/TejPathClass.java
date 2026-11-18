@@ -10,7 +10,7 @@ public class TejPathClass {
     private Follower follower;
     private Gamepad gamepad;
     private double wallBuffer = 3; //Inches
-    private Pose leftPos = new Pose(63.5, 132.7 - wallBuffer, Math.toRadians(90));
+    private Pose leftPos = new Pose(66, 126 - wallBuffer, Math.toRadians(90));
     private Pose rightPos = new Pose(55.7628, Constants.robotFrontDepth + wallBuffer, Math.toRadians(-90));
     private Pose resetPos = new Pose(Constants.robotWidth / 2, Constants.robotFrontDepth, Math.toRadians(-90));
 
