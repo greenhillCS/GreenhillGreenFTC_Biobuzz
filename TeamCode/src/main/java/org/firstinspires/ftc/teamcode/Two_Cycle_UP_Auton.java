@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
@@ -28,10 +29,8 @@ import org.firstinspires.ftc.teamcode.pedro.Position_Storage;
 public class Two_Cycle_UP_Auton extends LinearOpMode {
     private Follower follower;
 
-    // Hardware components for mechanismsg
-    private Servo gate = null;
-    private DcMotor intake = null;
-    private DcMotorEx shooter = null;
+    // Hardware components for mechanism
+    private TejToolClass tools;
 
     //Shooter constants
     private int shooterVelocity = 1880;
@@ -55,65 +54,53 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
     private final Pose point3Control1 = poseFactory.of(49.748, 23.5056, 0);
     private final Pose point3Control2 = poseFactory.of(9.9093, 125.6709, 0);
     private final Pose point4Start = poseFactory.of(61, 120, 90);
-    private final Pose point4 = poseFactory.of(61, 131.5, 92);
+    private final Pose point4 = poseFactory.of(61, 122, 92);
     private final Pose point5Start = poseFactory.of(61, 131.5, 90);
     private final Pose point5 = poseFactory.of(15, 121.2961, 0);
     private final Pose point5Control1 = poseFactory.of(61.0915, 110.2994, 0);
     private final Pose point5Control2 = poseFactory.of(25.1581, 120.5923, 0);
     private final Pose point5Control3 = poseFactory.of(34.5963, 115.5136, 0);
     // Mechanism state helper methods with state tracking
-    private void setIdle() {
-        robotState = "IDLE";
-        gate.setPosition(0);
-        intake.setPower(0.0);
-        shooter.setVelocity(shooterVelocity);
-    }
-    private void setComplete() {
-        robotState = "Complete";
-        gate.setPosition(0);
-        intake.setPower(0.0);
-        shooter.setPower(0.0);
-    }
 
     // Autonomous routine using Ivy Command Groups matching your requirements
     public Command autoRoutine() {
         return sequential(
                 // SHOOT then Follow Path 1
-                instant(() -> shooter.setVelocity(shooterVelocity)),
+                instant(() -> tools.shooterOn()),
                 waitMs(5000),
 
-                instant(() -> gate.setPosition(1)),
+                instant(() -> tools.gateOpen()),
                 waitMs(2000),
-                instant(() -> gate.setPosition(0)),
+                instant(() -> tools.gateClose()),
 
                 // Follow Path 2 while INTAKE is active
                 waitMs(500),
-                instant(() -> intake.setPower(1)),
+                instant(() -> tools.intakeOn()),
                 follow(follower, path1()),
                 follow(follower, path2()),
 
                 // Follow Path 3 and Path 4
                 waitMs(2000),
                 follow(follower, path3()),
-                instant(() -> intake.setPower(0)),
+                instant(() -> tools.intakeOff()),
                 follow(follower, path4()),
 
                 // SHOOT again
-                instant(() -> shooter.setVelocity(shooterVelocity)),
+                instant(() -> tools.shooterOn()),
                 waitMs(2000),
 
-                instant(() -> gate.setPosition(1)),
+                instant(() -> tools.gateOpen()),
                 waitMs(2000),
-                instant(() -> gate.setPosition(0)),
+                instant(() -> tools.gateClose()),
 
                 waitMs(500),
 
                 // Follow Path 5
-                instant(this::setIdle),
+                instant(() -> tools.idle()),
                 follow(follower, path5()),
 
                 // Turn off everything once the final path completes
-                instant(this::setComplete)
+                instant(() -> tools.off())
         );
     }
 
@@ -122,18 +109,12 @@ public class Two_Cycle_UP_Auton extends LinearOpMode {
         Scheduler.reset();
 
         // Hardware mapping
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        shooter = hardwareMap.get(DcMotorEx.class, "shooter");
-        gate = hardwareMap.get(Servo.class, "gate");
+        tools = new TejToolClass(hardwareMap, gamepad1, telemetry);
 
-        intake.setDirection(DcMotor.Direction.FORWARD);
-        shooter.setDirection(DcMotor.Direction.FORWARD);
 
         follower = Constants.create(hardwareMap);
         follower.setPose(start);
         follower.update();
-
-        gate.setPosition(0);
 
         waitForStart();
 
