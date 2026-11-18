@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class TejToolClass {
-    private int shooterVelocityTeleOp = 1860;
-    private int shooterVelocityAuton = 1880;
+    private int shooterVelocityTeleOp = 1850;
+    private int shooterVelocityAuton = 1870;
     private double intakePower = 1;
     private double gatePos = 1;
     private HardwareMap hardwareMap;
@@ -32,6 +32,7 @@ public class TejToolClass {
     //Update 2 Variables
     private double PreShootInterval = 300;
     private double PostShootInterval = 150;
+    private boolean flowerUp = true;
     private enum RobotState {
         INTAKE,
         SHOOT,
@@ -54,7 +55,7 @@ public class TejToolClass {
         this.gamepad = gamepad;
         this.telemetry = telemetry;
 
-        pidf = new PIDF(15, 0, 0.015, 12.5);
+        pidf = new PIDF(100, 0, 0.01, 11.7824523553);
 
         intake = hardwareMap.get(DcMotor.class, "intake"); // Port 0
         shooter = hardwareMap.get(DcMotorEx.class,"shooter"); // Port 1
@@ -127,10 +128,13 @@ public class TejToolClass {
         flowerServo.setPosition(0.32);
     }
     public void updateFlower(){
-        if(gamepad.x){
-            flowerDown();
-        }else{
+        if(gamepad.xWasPressed()){
+            flowerUp = !flowerUp;
+        }
+        if(flowerUp){
             flowerUp();
+        }else{
+            flowerDown();
         }
     }
     public void updateVelo(){
@@ -141,6 +145,9 @@ public class TejToolClass {
         if (gamepad.rightBumperWasPressed()) {
             shooterVelocityTeleOp += 10;
         }
+    }
+    public double getVelo(){
+        return shooter.getVelocity();
     }
     public void update1(){
 

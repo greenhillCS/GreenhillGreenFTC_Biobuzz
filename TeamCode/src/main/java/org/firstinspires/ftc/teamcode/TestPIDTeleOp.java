@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
 import com.pedropathing.math.Pose;
@@ -30,6 +31,9 @@ public class TestPIDTeleOp extends LinearOpMode {
         follower.setPose(Position_Storage.pos);
         follower.update();
 
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = dashboard.getTelemetry();
+
         tools = new TejToolClass(hardwareMap, gamepad1, telemetry);
 
         // Wait for the game to start (driver presses START)
@@ -59,6 +63,8 @@ public class TestPIDTeleOp extends LinearOpMode {
             telemetry.addData("Robot Y", robotPose.y());
             telemetry.addData("Robot Heading", Math.toDegrees(robotPose.heading()));
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Velocity", tools.getVelo());
+            telemetry.addData("Time", runtime);
 
             telemetry.update();
         }
