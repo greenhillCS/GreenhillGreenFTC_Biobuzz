@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static com.pedropathing.api.Paths.*;
 import com.pedropathing.api.Paths;
 
 import com.pedropathing.api.PoseFactory;
@@ -10,7 +9,6 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import static com.pedropathing.ivy.Scheduler.schedule;
-import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -18,8 +16,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 
-@Autonomous(name = "AutoPath", group = "Autonomous")
-public class Ballsy_Auton extends LinearOpMode {
+@Autonomous(name = "Ballsy_Auton_A", group = "Autonomous")
+public class Ballsy_Auton_A extends LinearOpMode {
 
     private Follower follower;
 
@@ -29,9 +27,9 @@ public class Ballsy_Auton extends LinearOpMode {
     private final Pose path1 = poseFactory.of(8.8989, 7.9307, -90);
     private final Pose path1Control1 = poseFactory.of(34.3896, 40.5975, 0);
     private final Pose point2Start = poseFactory.of(8.8989, 7.9307, -90);
-    private final Pose point2 = poseFactory.of(49.2245, 130.7718, 105);
+    private final Pose point2 = poseFactory.of(52.6404, 130.1149, 105);
     private final Pose point2Control1 = poseFactory.of(35.5248, 131.1406, 0);
-    private final Pose point3Start = poseFactory.of(49.2245, 130.7718, 105);
+    private final Pose point3Start = poseFactory.of(52.6404, 130.1149, 105);
     private final Pose point3 = poseFactory.of(10.3643, 46.7523, 180);
     private final Pose point4Start = poseFactory.of(10.3643, 46.7523, 180);
     private final Pose point4 = poseFactory.of(55.7412, 10.7677, -90);
